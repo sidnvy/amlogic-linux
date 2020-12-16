@@ -1,6 +1,6 @@
-# Overlays for the Odroid platform
+# Overlays for the Bananapi M5
 
-dtbo-$(CONFIG_ARCH_MESON64_ODROIDC4) += spi0.dtbo \
+dtbo-$(CONFIG_ARCH_MESON64_BANANAPI_M5) += spi0.dtbo \
 					i2c0.dtbo \
 					i2c1.dtbo \
 					pwm_ab.dtbo \
