@@ -1,0 +1,106 @@
+/*
+ * arch/arm64/boot/dts/amlogic/meson64_odroidc4_android.dts
+ *
+ * Copyright (C) 2019 Hardkernel Co., Ltd. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ */
+
+#include "meson64_bananapi_m5.dts"
+
+/ {
+	firmware {
+		android {
+			compatible = "android,firmware";
+			fstab {
+				compatible = "android,fstab";
+				system {
+					compatible = "android,system";
+					dev = "/dev/block/system";
+					type = "ext4";
+					mnt_flags = "ro,barrier=1,inode_readahead_blks=8";
+					fsmgr_flags = "wait";
+				};
+				vendor {
+					compatible = "android,vendor";
+					dev = "/dev/block/vendor";
+					type = "ext4";
+					mnt_flags = "ro,barrier=1,inode_readahead_blks=8";
+					fsmgr_flags = "wait";
+				};
+				odm {
+					compatible = "android,odm";
+					dev = "/dev/block/odm";
+					type = "vfat";
+					mnt_flags = "rw";
+					fsmgr_flags = "wait";
+				};
+				product {
+					compatible = "android,product";
+					dev = "/dev/block/product";
+					type = "ext4";
+					mnt_flags = "ro,barrier=1,inode_readahead_blks=8";
+					fsmgr_flags = "wait";
+				};
+			};
+		};
+	};
+
+	odroid_sysfs {
+		compatible = "odroid-sysfs";
+		status = "okay";
+	};
+};
+
+&custom_maps {
+	mapnum = <2>;
+	map0 = <&map_0>;
+	map1 = <&map_1>;
+	map_0: map_0{
+		mapname = "amlogic-remote-1";
+		customcode = <0xfe01>;
+		release_delay = <80>;
+		size  = <13>;   /*keymap size*/
+		keymap = <REMOTE_KEY(0x00, KEY_POWER)
+			REMOTE_KEY(0x01, KEY_MENU)
+			REMOTE_KEY(0x09, KEY_HOME)
+			REMOTE_KEY(0x02, KEY_LEFT)
+			REMOTE_KEY(0x0a, KEY_RIGHT)
+			REMOTE_KEY(0x05, KEY_UP)
+			REMOTE_KEY(0x04, KEY_DOWN)
+			REMOTE_KEY(0x06, KEY_ENTER)
+			REMOTE_KEY(0x03, KEY_VOLUMEDOWN)
+			REMOTE_KEY(0x0b, KEY_VOLUMEUP)
+			REMOTE_KEY(0x40, KEY_BACK)
+			REMOTE_KEY(0x48, KEY_PLAYPAUSE)
+			REMOTE_KEY(0x44, KEY_MUTE)>;
+	};
+	map_1: map_1{
+		mapname = "amlogic-remote-2";
+		customcode = <0xaf40>;
+		release_delay = <80>;
+		size  = <13>;
+		keymap = <REMOTE_KEY(0x0e, KEY_POWER)
+			REMOTE_KEY(0x07, KEY_MENU)
+			REMOTE_KEY(0x02, KEY_HOME)
+			REMOTE_KEY(0x01, KEY_LEFT)
+			REMOTE_KEY(0x03, KEY_RIGHT)
+			REMOTE_KEY(0x19, KEY_UP)
+			REMOTE_KEY(0x05, KEY_DOWN)
+			REMOTE_KEY(0x06, KEY_ENTER)
+			REMOTE_KEY(0x12, KEY_VOLUMEDOWN)
+			REMOTE_KEY(0x04, KEY_VOLUMEUP)
+			REMOTE_KEY(0x0f, KEY_BACK)
+			REMOTE_KEY(0x0d, KEY_PLAYPAUSE)
+			REMOTE_KEY(0x11, KEY_MUTE)>;
+	};
+};
