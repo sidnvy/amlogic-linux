@@ -20,7 +20,8 @@ dtbo-$(CONFIG_ARCH_MESON64_BANANAPI_M5) += spi0.dtbo \
 					waveshare_tft24_lcd.dtbo \
 					custom_ir.dtbo \
 					hifi_pcm5102a.dtbo \
-					hifi_pcm5122.dtbo
+					hifi_pcm5122.dtbo \
+					wifi_bt_rtl8822cs.dtbo \
 
 targets	+= $(dtbo-y)
 always	:= $(dtbo-y)
