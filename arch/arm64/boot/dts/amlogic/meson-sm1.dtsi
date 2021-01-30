@@ -32,7 +32,7 @@
 			 <&clkc_audio AUD_CLKID_MST_B_SCLK>,
 			 <&clkc_audio AUD_CLKID_MST_B_LRCLK>;
 		clock-names = "mclk", "sclk", "lrclk";
-		status = "disabled";
+		status = "okay";
 	};
 
 	tdmif_c: audio-controller-2 {

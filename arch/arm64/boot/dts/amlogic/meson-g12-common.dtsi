@@ -297,7 +297,7 @@
 				clocks = <&clkc CLKID_AUDIO_CODEC>;
 				clock-names = "pclk";
 				resets = <&reset RESET_AUDIO_CODEC>;
-				status = "disabled";
+				status = "okay";
 			};
 
 			periphs: bus@34400 {

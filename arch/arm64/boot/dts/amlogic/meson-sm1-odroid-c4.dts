@@ -40,13 +40,19 @@
 
 	leds {
 		compatible = "gpio-leds";
-
 		led-blue {
 			color = <LED_COLOR_ID_BLUE>;
 			function = LED_FUNCTION_STATUS;
 			gpios = <&gpio_ao GPIOAO_11 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "heartbeat";
+			linux,default-trigger = "timer";
 			panic-indicator;
+		};
+
+		led-green {
+			color = <LED_COLOR_ID_GREEN>;
+			function = LED_FUNCTION_STATUS;
+			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
 		};
 	};
 
@@ -372,9 +378,7 @@
 		/* GPIOH */
 		"", "", "", "", "",
 		"PIN_36", /* GPIOH_5 */
-		"PIN_26", /* GPIOH_6 */
-		"PIN_32", /* GPIOH_7 */
-		"",
+		"", "", "",
 		/* BOOT */
 		"", "", "", "", "", "", "", "",
 		"", "", "", "", "", "", "", "",
@@ -402,10 +406,10 @@
 		"PIN_10", /* GPIOX_13 */
 		"PIN_29", /* GPIOX_14 */
 		"PIN_31", /* GPIOX_15 */
-		"PIN_12", /* GPIOX_16 */
+		"PIN_26", /* GPIOX_16 */
 		"PIN_3",  /* GPIOX_17 */
 		"PIN_5",  /* GPIOX_18 */
-		"PIN_35"; /* GPIOX_19 */
+		"PIN_32"; /* GPIOX_19 */
 
 	/*
 	 * WARNING: The USB Hub on the Odroid-C4 needs a reset signal
@@ -612,7 +616,7 @@
 
 &usb {
 	status = "okay";
-	vbus-supply = <&usb_pwr_en>;
+	/* vbus-supply = <&usb_pwr_en>; */
 };
 
 &usb2_phy0 {
