@@ -57,20 +57,26 @@
 	leds {
 		compatible = "gpio-leds";
 		blueled {
-			label = "blue:heartbeat";
-			gpios = <&gpio_ao GPIOAO_11 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "heartbeat";
+			label = "blue";
+			gpios = <&gpio_ao GPIOAO_11 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "timer";
+		};
+
+		greenled {
+			label = "green";
+			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "none";
 		};
 	};
 
 	gpio-reset {
 		compatible = "linux,gpio-reset";
 		usb_hub_en {
-			gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio GPIOH_6 GPIO_ACTIVE_HIGH>;
 			asserted-state = <0>;
 			duration-ms = <100>;
 		};
-		usb_hub {
+		usb_hub_rst {
 			gpios = <&gpio GPIOH_4 GPIO_ACTIVE_HIGH>;
 			asserted-state = <0>;
 			duration-ms = <100>;
@@ -189,6 +195,10 @@
 &pcie_A {
 	reset-gpio = <&gpio GPIOX_7 GPIO_ACTIVE_HIGH>;
 	status = "disabled";
+};
+
+&saradc {
+	status = "okay";
 };
 
 &sd_emmc_c {
