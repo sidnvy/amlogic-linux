@@ -18,10 +18,10 @@
 /dts-v1/;
 
 #include "mesonsm1.dtsi"
-#include "mesong12_odroid_common.dtsi"
+#include "mesong12_bananapi_common.dtsi"
 
 / {
-	model = "Hardkernel ODROID-C4";
+	model = "Bananapi BPI-M5";
 	compatible = "amlogic, g12a";
 	interrupt-parent = <&gic>;
 	#address-cells = <2>;
@@ -184,6 +184,7 @@
 			0x1b05  0x9
 			0x1c59  0xf850
 			0xffff  0x0>; /* ending flag */
+		vdac_config = <0xa000>;
 	};
 
 	deinterlace {
@@ -608,7 +609,7 @@
 		status = "disabled";
 	};
 
-	meson-ir {
+	meson_ir: meson-ir {
 		compatible = "amlogic,meson6-ir";
 		/* Multi-format IR controller */
 		reg = <0x0 0xff808040 0x0 0x44>;
@@ -644,7 +645,7 @@
 		tdmout_index = <2>;
 		ch0_sel = <0>;
 		ch1_sel = <1>;
-		status = "disabled";
+		status = "okay";
 	};
 	audio_effect:eqdrc{
 		/*eq_enable = <1>;*/
@@ -662,37 +663,42 @@
 		/* max 0xff, each bit for one channel */
 		channel_mask = <0x3>;
 	};
-	odroid_hdmi {
+	auge_sound: auge_sound {
 		compatible = "amlogic, g12a-sound-card";
-		aml-audio-card,name = "ODROID-HDMI";
+		aml-audio-card,name = "AML-AUGESOUND";
 
-		/* ODROID-C4: spdif_out GPIOAO_10(J7.2), HDMI out*/
 		aml-audio-card,dai-link@0 {
 			mclk-fs = <128>;
 			continuous-clock;
+			suffix-name = "hdmi-spdifa";
 			cpu {
 				sound-dai = <&spdifa>;
 				system-clock-frequency = <6144000>;
 			};
 			codec {
-				sound-dai = <&spdif_dit>;
+				sound-dai = <&dummy_codec>;
 			};
 		};
-	};
-	odroid_lineout: odroid_lineout {
-		compatible = "amlogic, g12a-sound-card";
-		aml-audio-card,name = "ODROID-LINEOUT";
-		status = "disabled";
-	};
-	odroid_hifi: odroid_hifi {
-		compatible = "amlogic, g12a-sound-card";
-		aml-audio-card,name = "ODROID-HIFI";
-		status = "disabled";
-	};
-	odroid_hifi2: odroid_hifi2 {
-		compatible = "amlogic, g12a-sound-card";
-		aml-audio-card,name = "ODROID-HIFI2";
-		status = "disabled";
+
+		aml-audio-card,dai-link@1 {
+			format = "i2s";
+			mclk-fs = <256>;
+                        continuous-clock;
+			suffix-name = "lineout";
+			bitclock-master = <&tdmc>;
+			frame-master = <&tdmc>;
+			cpu {
+				sound-dai = <&tdmc>;
+				dai-tdm-slot-tx-mask = <1 1>;
+				dai-tdm-slot-rx-mask = <1 1>;
+				dai-tdm-slot-num = <2>;
+				dai-tdm-slot-width = <32>;
+				system-clock-frequency = <12288000>;
+			};
+			codec {
+				sound-dai = <&amlogic_codec>;
+			};
+		};
 	};
 
 	audiolocker: locker {
@@ -715,7 +721,7 @@
 
 	gpio_keypad{
 		compatible = "amlogic, gpio_keypad";
-		status = "okay";
+		status = "disabled";
 		scan_period = <20>;
 		key_num = <1>;
 		key_name = "power";
@@ -723,15 +729,24 @@
 		reg = <0x0 0xFF800000 0x0 0x400>;
 	};
 
-	hk-lirc-helper {
+	adc_keypad {
+		compatible = "amlogic, adc_keypad";
+		status = "okay";
+		key_name = "power";
+		key_num = <1>;
+		io-channels = <&saradc SARADC_CH2>;
+		io-channel-names = "key-chan-2";
+		key_chan = <SARADC_CH2>;
+		key_code = <116>;
+		key_val = <0>; //val=voltage/1800mV*1023
+		key_tolerance = <40>;
+	};
+
+	hk_lirc: hk-lirc-helper {
 		compatible = "hk-lirc-helper";
 		/* Multi-format IR controller */
 		reg = <0x0 0xff808040 0x0 0x44>;
 		status = "ok";
-	};
-
-	gpio-reset {
-		/delete-node/ usb_hub_en;
 	};
 }; /* end of / */
 
@@ -766,7 +781,7 @@
 				&clkc CLKID_MPLL2>;
 		clock-names = "mclk", "clk_srcpll";
 		i2s2hdmi = <0>;
-		status = "disabled";
+		status = "okay";
 	};
 
 	spdifa: spdif@0 {
@@ -801,9 +816,7 @@
 		/* GPIOH */
 		"", "", "", "", "",
 		"PIN_36", /* GPIOH_5 */
-		"PIN_26", /* GPIOH_6 */
-		"PIN_32", /* GPIOH_7 */
-		"",
+		"", "", "",
 		/* BOOT */
 		"", "", "", "", "", "", "", "",
 		"", "", "", "", "", "", "", "",
@@ -831,22 +844,22 @@
 		"PIN_10", /* GPIOX_13 */
 		"PIN_29", /* GPIOX_14 */
 		"PIN_31", /* GPIOX_15 */
-		"PIN_12", /* GPIOX_16 */
+		"PIN_26", /* GPIOX_16 */
 		"PIN_3",  /* GPIOX_17 */
 		"PIN_5",  /* GPIOX_18 */
-		"PIN_35"; /* GPIOX_19 */
+		"PIN_32"; /* GPIOX_19 */
 };
 
 &gpio_ao {
 	gpio-line-names =
 		/* GPIOAO */
 		"", "", "", "",
-		"PIN_47", /* GPIOAO_4 */
+		"PIN_40", /* GPIOAO_4 */
 		"", "",
-		"PIN_45", /* GPIOAO_7 */
-		"PIN_46", /* GPIOAO_8 */
-		"PIN_44", /* GPIOAO_9 */
-		"PIN_42", /* GPIOAO_10 */
+		"PIN_35", /* GPIOAO_7 */
+		"PIN_12", /* GPIOAO_8 */
+		"PIN_37", /* GPIOAO_9 */
+		"PIN_38", /* GPIOAO_10 */
 		"",
 		/* GPIOE */
 		"", "", "",
@@ -862,13 +875,13 @@
 	status = "okay";
 	portnum = <1>;
 	otg = <1>;
-	gpio-vbus-power = "GPIOAO_2";
-	gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_HIGH>;
+	/*gpio-vbus-power = "GPIOAO_2";
+	gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_HIGH>;*/
 };
 
 &reboot {
 	sd_volsw_gpio = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_HIGH>;
-	sd_power_gpio = <&gpio_ao GPIOAO_3 GPIO_ACTIVE_HIGH>;
+	sd_power_gpio = <&gpio GPIOH_8 GPIO_ACTIVE_HIGH>;
 	sd_vddio_gpio = <&gpio_ao GPIOE_2 GPIO_ACTIVE_HIGH>;
 };
 
@@ -913,6 +926,15 @@
 };
 
 &pinctrl_periphs {
+	a_uart_cts_rts_pins: a_uart_cts_rts {
+		mux {
+			groups = "uart_tx_a",
+				"uart_rx_a",
+				"uart_cts_a",
+				"uart_rts_a";
+			function = "uart_a";
+		};
+	};
 };
 
 &pinctrl_aobus {
